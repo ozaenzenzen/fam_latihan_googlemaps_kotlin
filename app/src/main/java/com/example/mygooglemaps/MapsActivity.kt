@@ -1,6 +1,7 @@
 package com.example.mygooglemaps
 
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Camera
 import android.graphics.Canvas
@@ -28,6 +29,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.example.mygooglemaps.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.MapStyleOptions
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -97,6 +99,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         getMyLocation()
+        setMapStyle()
+    }
+
+    private fun setMapStyle() {
+        try {
+            val success =
+                mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
+            if (!success) {
+                Log.e(TAG, "Style parsing failed")
+            }
+        } catch (exception: Resources.NotFoundException) {
+            Log.e(TAG, "Can't find style. Error: $exception")
+        }
+    }
+
+    companion object {
+        private const val TAG = "MapsActivity"
     }
 
     private val requestPermissionLauncher =
