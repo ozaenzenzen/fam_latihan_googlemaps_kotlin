@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.example.mygooglemaps.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -100,6 +101,40 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         getMyLocation()
         setMapStyle()
+        addManyMarker()
+    }
+
+    private val boundsBuilder = LatLngBounds.Builder()
+
+    data class TourismPlace(
+        val name: String,
+        val latitude: Double,
+        val longitude: Double,
+    )
+
+    private fun addManyMarker() {
+        val toursimPlace = listOf(
+            TourismPlace("Floating Market Lembang", -6.8168954, 107.6151046),
+            TourismPlace("The Great Asia Africa", -6.8331128, 107.6048483),
+            TourismPlace("Rabbit Town", -6.8668408, 107.608081),
+            TourismPlace("Alun-Alun Kota Bandung", -6.9218518, 107.6025294),
+            TourismPlace("Orchid Forest Cikole", -6.780725, 107.637409),
+        )
+        toursimPlace.forEach { tourism ->
+            val latLng = LatLng(tourism.latitude, tourism.longitude)
+            mMap.addMarker(MarkerOptions().position(latLng).title(tourism.name))
+            boundsBuilder.include(latLng)
+        }
+
+        val bounds: LatLngBounds = boundsBuilder.build()
+        mMap.animateCamera(
+            CameraUpdateFactory.newLatLngBounds(
+                bounds,
+                resources.displayMetrics.widthPixels,
+                resources.displayMetrics.heightPixels,
+                300
+            )
+        )
     }
 
     private fun setMapStyle() {
